@@ -1,154 +1,104 @@
 import java.util.Scanner;
 
-public class TuringMachineSimulator {
+public class TuringMachineByStates {
 
-    public static void turingAddOneUnary(String input) {
+    // Пример: инвертирует все 0 на 1 и 1 на 0
+    public static void invertBinary(String input) {
         char[] tape = (input + "_").toCharArray();
         int head = 0;
         String state = "q0";
 
-        while (!state.equals("qf")) {
-            switch (state) {
-                case "q0" -> {
-                    if (tape[head] == '1') head++;
-                    else if (tape[head] == '_') {
-                        tape[head] = '1';
-                        state = "qf";
-                    }
-                }
-            }
-        }
-        System.out.println("Результат (унарное сложение): " + new String(tape).replaceAll("_+$", ""));
-    }
-
-    public static void turingInvertBinary(String input) {
-        char[] tape = (input + "_").toCharArray();
-        int head = 0;
-        String state = "q0";
+        System.out.println("\n--- Инверсия двоичной строки ---");
+        System.out.println("Стартовая лента: " + new String(tape));
 
         while (!state.equals("qf")) {
+            char current = tape[head];
+
+            System.out.printf("[Состояние: %s] Символ под головкой: '%c', Позиция: %d\n", state, current, head);
+
             switch (state) {
                 case "q0" -> {
-                    if (tape[head] == '1') {
+                    if (current == '1') {
                         tape[head] = '0';
+                        System.out.println("Заменили 1 на 0");
                         head++;
-                    } else if (tape[head] == '0') {
+                    } else if (current == '0') {
                         tape[head] = '1';
+                        System.out.println("Заменили 0 на 1");
                         head++;
-                    } else if (tape[head] == '_') {
+                    } else if (current == '_') {
+                        System.out.println("Конец строки. Переход в конечное состояние.");
                         state = "qf";
                     }
                 }
             }
+
+            System.out.println("Лента: " + new String(tape));
         }
-        System.out.println("Результат (инверсия): " + new String(tape).replaceAll("_+$", ""));
+
+        System.out.println("Результат: " + new String(tape).replaceAll("_+$", ""));
     }
 
-    public static void turingCheckAllOnes(String input) {
+    // Пример: унарное сложение — добавляет один символ '1' в конец
+    public static void unaryAddition(String input) {
+        if (!input.matches("1+")) {
+            System.out.println("Ошибка: вход должен содержать только символы '1' (унарное число).");
+            return;
+        }
+
         char[] tape = (input + "_").toCharArray();
         int head = 0;
         String state = "q0";
 
-        while (!state.equals("q_yes") && !state.equals("q_no")) {
-            switch (state) {
-                case "q0" -> {
-                    if (tape[head] == '1') head++;
-                    else if (tape[head] == '0') state = "q_no";
-                    else if (tape[head] == '_') state = "q_yes";
-                }
-            }
-        }
-        System.out.println("Результат: " + (state.equals("q_yes") ? "Все символы — 1" : "Найдены нули!"));
-    }
-
-    public static void turingRemoveZeros(String input) {
-        char[] tape = (input + "_").toCharArray();
-        int head = 0;
-
-        while (tape[head] != '_') {
-            if (tape[head] == '0') tape[head] = '_';
-            head++;
-        }
-
-        StringBuilder result = new StringBuilder();
-        for (char c : tape) {
-            if (c == '1') result.append(c);
-        }
-
-        System.out.println("Результат (удалены нули): " + result);
-    }
-
-    public static void turingMultiplyUnaryByTwo(String input) {
-        char[] tape = (input + "____").toCharArray();
-        int head = 0;
-        String state = "q0";
+        System.out.println("\n--- Унарное сложение ---");
+        System.out.println("Стартовая лента: " + new String(tape));
 
         while (!state.equals("qf")) {
+            char current = tape[head];
+
+            System.out.printf("[Состояние: %s] Символ: '%c', Позиция: %d\n", state, current, head);
+
             switch (state) {
                 case "q0" -> {
-                    if (tape[head] == '1') {
-                        tape[head] = 'x';
+                    if (current == '1') {
                         head++;
-                        state = "q1";
-                    } else if (tape[head] == '_') {
-                        state = "q2";
-                        head--;
-                    }
-                }
-                case "q1" -> {
-                    if (tape[head] == '1' || tape[head] == 'x') {
-                        head++;
-                    } else if (tape[head] == '_') {
+                    } else if (current == '_') {
                         tape[head] = '1';
-                        head++;
-                        tape[head] = '1';
-                        head--;
-                        state = "q0";
-                    }
-                }
-                case "q2" -> {
-                    if (tape[head] == 'x') {
-                        tape[head] = '1';
-                        head--;
-                    } else if (tape[head] == '_') {
                         state = "qf";
+                        System.out.println("Добавили 1 в конец.");
                     }
                 }
             }
+
+            System.out.println("Лента: " + new String(tape));
         }
 
-        System.out.println("Результат (умножение унарного числа на 2): " + new String(tape).replaceAll("_+$", ""));
+        System.out.println("Результат: " + new String(tape).replaceAll("_+$", ""));
     }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\nМеню Машины Тьюринга:");
-            System.out.println("1. Унарное сложение (добавить 1)");
-            System.out.println("2. Инверсия двоичной строки");
-            System.out.println("3. Проверка: все ли символы — 1");
-            System.out.println("4. Удаление нулей");
-            System.out.println("5. Унарное умножение на 2");
-            System.out.println("6. Выход");
-            System.out.print("Выберите опцию: ");
+            System.out.println("\n--- Машина Тьюринга ---");
+            System.out.println("1. Инверсия двоичной строки (0 → 1, 1 → 0)");
+            System.out.println("2. Унарное сложение (добавить 1)");
+            System.out.println("3. Выход");
+            System.out.print("Выберите действие: ");
             String choice = scanner.nextLine();
 
-            if (choice.equals("6")) {
-                System.out.println("Выход из программы...");
+            if (choice.equals("3")) {
+                System.out.println("Выход...");
                 break;
             }
 
-            System.out.print("Введите входную строку: ");
+            System.out.print("Введите строку на ленте: ");
             String input = scanner.nextLine().trim();
 
             switch (choice) {
-                case "1" -> turingAddOneUnary(input);
-                case "2" -> turingInvertBinary(input);
-                case "3" -> turingCheckAllOnes(input);
-                case "4" -> turingRemoveZeros(input);
-                case "5" -> turingMultiplyUnaryByTwo(input);
-                default -> System.out.println("Неверный выбор!");
+                case "1" -> invertBinary(input);
+                case "2" -> unaryAddition(input);
+                default -> System.out.println("Неверный выбор.");
             }
         }
     }
