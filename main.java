@@ -82,6 +82,7 @@ public class Main {
 
         while (true) {
             // меню управления
+            System.out.println("\nCopyright: Naniak Pavlo 123903\n")
             System.out.println("\nМеню управления:");
             System.out.println("1. Сгенерировать массив и отсортировать методом Шелла");
             System.out.println("2. Показать текущий массив");
