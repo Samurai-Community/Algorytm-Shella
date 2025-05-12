@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Main {
 
+    // метод шелла
     public static void shellSort(int[] array) {
         int n = array.length;
 
@@ -19,6 +20,8 @@ public class Main {
         }
     }
 
+
+    // генерирует рандомные элементы массива
     public static int[] generateRandomArray(int size, int maxValue) {
         Random rand = new Random();
         int[] array = new int[size];
@@ -28,6 +31,7 @@ public class Main {
         return array;
     }
 
+    // читает элементы массива которые ввел пользователь
     public static int[] readArrayFromInput(Scanner scanner) {
         System.out.println("Введите элементы массива через пробел:");
         String[] parts = scanner.nextLine().trim().split("\\s+");
@@ -45,6 +49,7 @@ public class Main {
         return array;
     }
 
+    // функция для замера времени и памяти
     public static void measureTime(Runnable task) {
         System.gc();
         long memBefore = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -59,11 +64,13 @@ public class Main {
         System.out.println("Использовано памяти: " + (memAfter - memBefore) + " байт");
     }
 
+    // оценка времени
     public static void estimateTime(int n) {
         double estimatedTime = Math.pow(n, 1.5) * 0.00001;
         System.out.printf("Оценка времени для n = %d: ~%.4f мс%n", n, estimatedTime);
     }
 
+    // оценка памяти
     public static void estimateMemory(int n) {
         int memoryBytes = n * 4 + 64;
         System.out.printf("Оценка памяти для n = %d: %d байт%n", n, memoryBytes);
@@ -74,6 +81,7 @@ public class Main {
         int[] array = null;
 
         while (true) {
+            // меню управления
             System.out.println("\nМеню управления:");
             System.out.println("1. Сгенерировать массив и отсортировать методом Шелла");
             System.out.println("2. Показать текущий массив");
@@ -83,6 +91,8 @@ public class Main {
             System.out.println("6. Ввести массив вручную");
             System.out.print("Выберите действие: ");
 
+            
+            // проверяем input на ошибку
             int choice;
             try {
                 choice = Integer.parseInt(scanner.nextLine());
@@ -92,6 +102,7 @@ public class Main {
             }
 
             switch (choice) {
+                // выполняем код когда выбрано 1
                 case 1 -> {
                     System.out.print("Введите размер массива: ");
                     int n = Integer.parseInt(scanner.nextLine());
@@ -104,7 +115,7 @@ public class Main {
                     System.out.println("Отсортированный массив:");
                     System.out.println(Arrays.toString(array));
                 }
-
+                // выполняем код когда выбрано 2
                 case 2 -> {
                     if (array == null) {
                         System.out.println("Сначала создайте или введите массив!");
@@ -113,24 +124,24 @@ public class Main {
                         System.out.println(Arrays.toString(array));
                     }
                 }
-
+                // выполняем код когда выбрано 3
                 case 3 -> {
                     System.out.print("Введите размер массива для оценки: ");
                     int n = Integer.parseInt(scanner.nextLine());
                     estimateTime(n);
                 }
-
+                // выполняем код когда выбрано 4
                 case 4 -> {
                     System.out.print("Введите размер массива для оценки: ");
                     int n = Integer.parseInt(scanner.nextLine());
                     estimateMemory(n);
                 }
-
+                // выполняем код когда выбрано 5
                 case 5 -> {
                     System.out.println("Выход из программы...");
                     return;
                 }
-
+                // выполняем код когда выбрано 6
                 case 6 -> {
                     int[] manualArray = readArrayFromInput(scanner);
                     if (manualArray != null) {
