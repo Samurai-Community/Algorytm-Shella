@@ -1,105 +1,102 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
-public class TuringMachineByStates {
+public class TuringMachine {
 
-    // Пример: инвертирует все 0 на 1 и 1 на 0
-    public static void invertBinary(String input) {
-        char[] tape = (input + "_").toCharArray();
-        int head = 0;
-        String state = "q0";
+    private char[] tape;
+    private int head;
 
-        System.out.println("\n--- Инверсия двоичной строки ---");
-        System.out.println("Стартовая лента: " + new String(tape));
-
-        while (!state.equals("qf")) {
-            char current = tape[head];
-
-            System.out.printf("[Состояние: %s] Символ под головкой: '%c', Позиция: %d\n", state, current, head);
-
-            switch (state) {
-                case "q0" -> {
-                    if (current == '1') {
-                        tape[head] = '0';
-                        System.out.println("Заменили 1 на 0");
-                        head++;
-                    } else if (current == '0') {
-                        tape[head] = '1';
-                        System.out.println("Заменили 0 на 1");
-                        head++;
-                    } else if (current == '_') {
-                        System.out.println("Конец строки. Переход в конечное состояние.");
-                        state = "qf";
-                    }
-                }
-            }
-
-            System.out.println("Лента: " + new String(tape));
-        }
-
-        System.out.println("Результат: " + new String(tape).replaceAll("_+$", ""));
+    public TuringMachine(String input) {
+        this.tape = input.toCharArray();
+        this.head = 0;
     }
 
-    // Пример: унарное сложение — добавляет один символ '1' в конец
-    public static void unaryAddition(String input) {
-        if (!input.matches("1+")) {
-            System.out.println("Ошибка: вход должен содержать только символы '1' (унарное число).");
-            return;
+    public void replaceAll(char replacement) {
+        Arrays.fill(tape, replacement);
+    }
+
+    public void shiftLeft() {
+        for (int i = 1; i < tape.length; i++) {
+            tape[i - 1] = tape[i];
         }
+        tape[tape.length - 1] = '0';
+    }
 
-        char[] tape = (input + "_").toCharArray();
-        int head = 0;
-        String state = "q0";
+    public void invertBits() {
+        for (int i = 0; i < tape.length; i++) {
+            if (tape[i] == '0') tape[i] = '1';
+            else if (tape[i] == '1') tape[i] = '0';
+        }
+    }
 
-        System.out.println("\n--- Унарное сложение ---");
-        System.out.println("Стартовая лента: " + new String(tape));
-
-        while (!state.equals("qf")) {
-            char current = tape[head];
-
-            System.out.printf("[Состояние: %s] Символ: '%c', Позиция: %d\n", state, current, head);
-
-            switch (state) {
-                case "q0" -> {
-                    if (current == '1') {
-                        head++;
-                    } else if (current == '_') {
-                        tape[head] = '1';
-                        state = "qf";
-                        System.out.println("Добавили 1 в конец.");
-                    }
+    public void doubleValue() {
+        try {
+            String binary = new String(tape);
+            int value = Integer.parseInt(binary, 2);
+            value *= 2;
+            String doubled = Integer.toBinaryString(value);
+            Arrays.fill(tape, '0');
+            int start = tape.length - doubled.length();
+            for (int i = 0; i < doubled.length(); i++) {
+                if (start + i < tape.length) {
+                    tape[start + i] = doubled.charAt(i);
                 }
             }
-
-            System.out.println("Лента: " + new String(tape));
+        } catch (NumberFormatException e) {
+            System.out.println("Ошибка: лента содержит недопустимые символы.");
         }
+    }
 
-        System.out.println("Результат: " + new String(tape).replaceAll("_+$", ""));
+    public void printTape() {
+        System.out.println("Текущая лента: " + new String(tape));
     }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите начальное состояние ленты (например, 10110): ");
+        String input = scanner.nextLine();
+        TuringMachine machine = new TuringMachine(input);
 
         while (true) {
-            System.out.println("\n--- Машина Тьюринга ---");
-            System.out.println("1. Инверсия двоичной строки (0 → 1, 1 → 0)");
-            System.out.println("2. Унарное сложение (добавить 1)");
-            System.out.println("3. Выход");
-            System.out.print("Выберите действие: ");
+            System.out.println("\n===== МЕНЮ =====");
+            System.out.println("1. Заменить все на 0");
+            System.out.println("2. Заменить все на 1");
+            System.out.println("3. Сдвинуть все влево");
+            System.out.println("4. Инвертировать 0 и 1");
+            System.out.println("5. Удвоить значение");
+            System.out.println("6. Показать ленту");
+            System.out.println("0. Выход");
+            System.out.print("Выберите опцию: ");
+
             String choice = scanner.nextLine();
 
-            if (choice.equals("3")) {
-                System.out.println("Выход...");
-                break;
-            }
-
-            System.out.print("Введите строку на ленте: ");
-            String input = scanner.nextLine().trim();
-
             switch (choice) {
-                case "1" -> invertBinary(input);
-                case "2" -> unaryAddition(input);
-                default -> System.out.println("Неверный выбор.");
+                case "1":
+                    machine.replaceAll('0');
+                    break;
+                case "2":
+                    machine.replaceAll('1');
+                    break;
+                case "3":
+                    machine.shiftLeft();
+                    break;
+                case "4":
+                    machine.invertBits();
+                    break;
+                case "5":
+                    machine.doubleValue();
+                    break;
+                case "6":
+                    machine.printTape();
+                    break;
+                case "0":
+                    System.out.println("Завершение работы.");
+                    return;
+                default:
+                    System.out.println("Неверный выбор. Попробуйте снова.");
             }
+
+            machine.printTape();
         }
     }
 }
